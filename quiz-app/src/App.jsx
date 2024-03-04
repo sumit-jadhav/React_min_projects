@@ -1,7 +1,8 @@
 import { useState } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./App.css"
-
+import Card from "react-bootstrap/Card"
+import Button from "react-bootstrap/Button"
 function App() {
   const quizQuestions = [
     {
@@ -37,8 +38,7 @@ function App() {
   ]
   const [question_No, setQuestion_No] = useState(0)
   const [score, setScore] = useState(0)
-
-  const questions = quizQuestions.map(({ question }) => ({ question }))
+  const [showScore, setShowScore] = useState(false)
 
   const nextPage = (selectedAnswer) => {
     if (selectedAnswer === quizQuestions[question_No].correctAnswer) {
@@ -47,39 +47,62 @@ function App() {
     if (question_No < quizQuestions.length - 1) {
       setQuestion_No(question_No + 1)
     } else {
-      alert(`Quiz ended! Your score: ${score}/${quizQuestions.length}`)
+      setShowScore(true)
     }
   }
-
+  const resetQuiz = () => {
+    setScore(0)
+    setShowScore(false)
+    setQuestion_No(0)
+  }
   return (
     <div className="container">
-      <div className="d-flex justify-content-center align-items-center ">
-        <div className="card">
-          <div className="card-body">
-            <h5 className="card-title">
-              Question :{quizQuestions[question_No].question}
-            </h5>
-          </div>
-          <ul className="list-group list-group-flush">
-            <div className="p-2">
-              {quizQuestions[question_No].options.map((option) => (
-                <li className="list-group-item" key={option}>
-                  <div className="d-grid ">
-                    <button
-                      value={option}
-                      onClick={() => nextPage(option)}
-                      className="btn btn-primary"
-                      type="button"
-                    >
-                      {option}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </div>
-          </ul>
+      {showScore ? (
+        <div className="d-flex justify-content-center align-items-center">
+          <Card
+            bg={"primary"}
+            key={"primary"}
+            text={"primary" === "light" ? "dark" : "white"}
+            style={{ width: "18rem" }}
+            className="mb-2 "
+          >
+            <Card.Body>
+              <Card.Title>{score} </Card.Title>
+              <Button onClick={() => resetQuiz()} variant="dark">
+                Retake
+              </Button>
+            </Card.Body>
+          </Card>
         </div>
-      </div>
+      ) : (
+        <div className="d-flex justify-content-center align-items-center ">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">
+                Question :{quizQuestions[question_No].question}
+              </h5>
+            </div>
+            <ul className="list-group list-group-flush">
+              <div className="p-2">
+                {quizQuestions[question_No].options.map((option) => (
+                  <li className="list-group-item" key={option}>
+                    <div className="d-grid ">
+                      <button
+                        value={option}
+                        onClick={() => nextPage(option)}
+                        className="btn btn-primary"
+                        type="button"
+                      >
+                        {option}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </div>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
